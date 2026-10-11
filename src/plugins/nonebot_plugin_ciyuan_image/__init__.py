@@ -46,6 +46,13 @@ __plugin_meta__ = PluginMetadata(
     usage="次元图 二次元\n次元图 原神 30\n发送「次元图」查看全部分类",
     type="application",
     homepage="https://github.com/xinvxueyuan/nonebot-plugin-ciyuan-image",
+    extra={
+        "menu_type": "功能",
+        "commands": [
+            {"command": "次元图", "desc": "随机图片：次元图 <分类> [张数]"},
+        ],
+        "order": 20,
+    },
 )
 
 matcher = on_command("次元图", aliases={"次元图"}, priority=10, block=True)
