@@ -79,30 +79,35 @@ uv run pyright
 `tests/` 里既有纯单测（分类解析、slug 解析、重试逻辑、合并转发 node 结构），
 也有**需要真实网络**的用例（实际从 t.alcy.cc 拉图）；htmlkit 未装时渲染用例自动 skip。
 
-## 分类表（2026-08 实测）
+## 分类表（2026-10-14 实测）
 
 | 子命令 | slug | 接口 | 说明 |
 | --- | --- | --- | --- |
 | 二次元 | ycy | 直接端点 | 原"二次元自适应" |
 | 萌版 | moez | 直接端点 | 原"萌版自适应" |
-| AI | ai | JSON | 原"AI自适应" |
 | 原神 | ysz | 直接端点 | 原"原神自适应" |
 | 横图 | pc | JSON | 原"PC横图" |
 | 萌版横图 | moe | JSON | |
 | 风景横图 | fj | JSON | |
-| 风景竖图 | fjmp | JSON | |
 | 白底横图 | bd | JSON | |
 | 原神横图 | ys | JSON | |
 | ACG动图 | acg | 直接端点(视频) | |
 | 竖图 | mp | JSON | 原"移动竖图" |
 | 萌版竖图 | moemp | JSON | |
 | 原神竖图 | ysmp | JSON | |
-| AI竖图 | aimp | JSON | |
 | 头像方图 | tx | JSON | |
 | 七濑胡桃 | lai | JSON | |
 | 小狐狸 | xhl | JSON | |
+| 初音横图 | miku | JSON | 2026-10 新上架 |
+| 初音竖图 | mikump | JSON | 2026-10 新上架 |
+| 初音自适应 | mikuz | 直接端点 | 2026-10 新上架 |
 
-未收录：`se/semp`（14+，接口 404）、`pixiv`（外部站 pivix.mwm.moe）。
+**已下架**（上游 JSON 与直出双 404，本插件表里已剔除）：`ai`（AI）、`fjmp`（风景竖图）、
+`aimp`（AI竖图）—— 发这些词会得到「未知分类 + 可用列表」的正常提示，不再报接口异常。
+上游对下架分类返回 **HTML 占位页**（不是 JSON 也不是 404），插件会把它转成
+「接口返回的不是 JSON（分类 X 可能已下架）」的可读错误。
+
+未收录：`se/semp`（14+，接口 404）、`pixiv`（外部站 piviv.mwm.moe）。
 
 ## 合并转发集成
 
@@ -121,4 +126,4 @@ uv run pyright
 
 ## 许可
 
-本仓库**未附加**开源许可证，默认**保留所有权利**（All rights reserved）。如需复用请联系作者。
+MIT（见 `pyproject.toml` 的 `license` 字段；仓库暂未附 `LICENSE` 文件）。

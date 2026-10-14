@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-plugin-ciyuan-image"
-version = "0.1.0"
+version = "0.1.1"
 description = "次元图：栗次元 (t.alcy.cc) 随机图片插件，子命令=分类标题，超过 3 张自动合并转发"
 keywords = ["nonebot2", "nonebot", "bot", "image", "anime", "random-image", "alcy"]
 readme = "README.md"

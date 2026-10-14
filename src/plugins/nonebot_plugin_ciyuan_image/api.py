@@ -1,11 +1,14 @@
 """栗次元 (t.alcy.cc) 分类表与图片拉取逻辑。
 
-接口形态（2026-08 实测）:
+接口形态（**2026-10-14 重新实测**；官方文档 https://t.alcy.cc/docs）:
 - JSON 分类: GET https://t.alcy.cc/json?<slug>=<N>
   -> {"code":200,"category","count","data":[...]}
 - 直接端点: GET https://t.alcy.cc/<slug>
   -> 302 到随机图片（无数量参数，需循环请求）
 - acg 为视频端点 (video/mp4)，按直接端点处理
+- ⚠️ 上游会对**已下架分类**返回 HTML 占位页（不是 JSON，也不是 404）——
+  2026-10 下架的有 `ai` / `fjmp` / `aimp`（JSON 与直出双 404），已从表中剔除；
+  同期新上架 `miku` / `mikump` / `mikuz`（初音系列），已补入。
 - se/semp (14+) 已 404、pixiv 为外部站，不收录
 """
 
@@ -24,22 +27,22 @@ BASE_URL = "https://t.alcy.cc"
 CATEGORIES: dict[str, dict[str, str]] = {
     "二次元": {"slug": "ycy", "kind": "direct"},
     "萌版": {"slug": "moez", "kind": "direct"},
-    "AI": {"slug": "ai", "kind": "json"},
     "原神": {"slug": "ysz", "kind": "direct"},
     "横图": {"slug": "pc", "kind": "json"},
     "萌版横图": {"slug": "moe", "kind": "json"},
     "风景横图": {"slug": "fj", "kind": "json"},
-    "风景竖图": {"slug": "fjmp", "kind": "json"},
     "白底横图": {"slug": "bd", "kind": "json"},
     "原神横图": {"slug": "ys", "kind": "json"},
     "ACG动图": {"slug": "acg", "kind": "video"},
     "竖图": {"slug": "mp", "kind": "json"},
     "萌版竖图": {"slug": "moemp", "kind": "json"},
     "原神竖图": {"slug": "ysmp", "kind": "json"},
-    "AI竖图": {"slug": "aimp", "kind": "json"},
     "头像方图": {"slug": "tx", "kind": "json"},
     "七濑胡桃": {"slug": "lai", "kind": "json"},
     "小狐狸": {"slug": "xhl", "kind": "json"},
+    "初音横图": {"slug": "miku", "kind": "json"},
+    "初音竖图": {"slug": "mikump", "kind": "json"},
+    "初音自适应": {"slug": "mikuz", "kind": "direct"},
 }
 
 # slug 反向索引（允许用户直接输 pc/moe 等）
@@ -129,7 +132,13 @@ async def _fetch_json(slug: str, count: int) -> list[str]:
     ) as client:
         resp = await client.get(url)
         resp.raise_for_status()
-        data: dict[str, Any] = resp.json()
+        try:
+            data: dict[str, Any] = resp.json()
+        except ValueError as e:
+            # 上游对已下架分类返回 HTML 占位页（2026-10-14 实测）：别把裸的
+            # JSONDecodeError 抛给用户，说清「可能已下架」并带响应片段。
+            msg = f"接口返回的不是 JSON（分类 {slug} 可能已下架）：{resp.text[:60]!r}"
+            raise ValueError(msg) from e
     if data.get("code") != 200:
         msg = f"接口返回异常 code={data.get('code')}"
         raise ValueError(msg)
@@ -148,8 +157,8 @@ async def _fetch_json(slug: str, count: int) -> list[str]:
 async def _fetch_direct(slug: str, count: int) -> list[str]:
     """直接端点：循环请求拿 count 张（每次 302 到随机资源）。
 
-    附加 ?postId=<n> 参数：参考官方文章，同一 URL 加不同参数可绕过
-    浏览器/代理缓存拿到不同图片（https://www.alcy.cc/archives/sui-ji-er-ci-yuan-tu-pian-api）。
+    附加 ?postId=<n> 参数：同一 URL 加不同参数可绕过浏览器/代理缓存拿到不同图片
+    （缓存击穿技巧；官方文章已下架，现行文档见 https://t.alcy.cc/docs）。
     """
     url = f"{BASE_URL}/{slug}"
     links: list[str] = []

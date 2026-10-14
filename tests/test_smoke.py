@@ -1,6 +1,7 @@
 """次元图插件冒烟测试：分类解析 + 实际 API 拉取 + 合并转发集成。"""
 
 import asyncio
+import json
 
 import httpx
 import nonebot
@@ -45,6 +46,64 @@ def test_category_list() -> None:
     assert "二次元" in text
     assert "原神" in text
     assert "ycy" in text
+
+
+def test_resolve_new_miku_categories() -> None:
+    """初音系列（上游 2026-10 在册）。"""
+    assert resolve_category("初音横图") == Category(
+        title="初音横图", slug="miku", kind="json"
+    )
+    assert resolve_category("mikump") == Category(
+        title="初音竖图", slug="mikump", kind="json"
+    )
+    assert resolve_category("mikuz") == Category(
+        title="初音自适应", slug="mikuz", kind="direct"
+    )
+
+
+def test_dead_categories_are_removed() -> None:
+    """已下架分类（ai / fjmp / aimp）不在表里 → 用户会得到「未知分类 + 可用列表」。"""
+    for word in ("AI", "ai", "风景竖图", "fjmp", "AI竖图", "aimp"):
+        assert resolve_category(word) is None
+
+
+@pytest.mark.asyncio
+async def test_json_endpoint_non_json_gives_readable_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """上游对下架分类返回 HTML 占位页时，要报「接口返回的不是 JSON」。"""
+    from nonebot_plugin_ciyuan_image import api
+
+    class HtmlClient:
+        """模拟 AsyncClient：永远返回 HTML 占位页。"""
+
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            pass
+
+        async def __aenter__(self) -> "HtmlClient":
+            return self
+
+        async def __aexit__(self, *args: object) -> None:
+            pass
+
+        async def get(self, _url: str, **_kw: object) -> object:
+            class Resp:
+                text = "<!doctype html><title>你好世界</title>"
+
+                def raise_for_status(self) -> None:
+                    return None
+
+                def json(self) -> object:
+                    msg = "Expecting value"
+                    raise json.JSONDecodeError(msg, self.text, 0)
+
+            return Resp()
+
+    monkeypatch.setattr(api.httpx, "AsyncClient", HtmlClient)
+    with pytest.raises(ValueError) as ei:
+        await api._fetch_json("pc", 1)
+    assert "不是 JSON" in str(ei.value)
+    assert "pc" in str(ei.value)
 
 
 # ---- 实际 API 拉取（需要网络）----
