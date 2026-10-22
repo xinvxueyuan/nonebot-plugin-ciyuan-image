@@ -164,4 +164,4 @@ module-name = ["nonebot_plugin_ciyuan_image"]
 module-root = "src/plugins"
 
 [tool.uv.sources]
-nonebot-plugin-merge-forward = { path = "C:/dev/nonebot-plugin-merge-forward" }
+nonebot-plugin-merge-forward = { git = "https://github.com/xinvxueyuan/nonebot-plugin-merge-forward.git" }

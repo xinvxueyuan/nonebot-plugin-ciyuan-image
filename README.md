@@ -134,10 +134,12 @@ uv sync --extra dev
 `uv sync --extra dev` 装齐开发依赖（pytest / ruff / pyright / htmlkit / fastapi）；
 `pyproject.toml` 的 `[dependency-groups]` 另带 `pytest-asyncio`。
 
-开发时依赖本地 merge-forward：`pyproject.toml` 的 `[tool.uv.sources]` 已把
-`nonebot-plugin-merge-forward` 指向 `C:/dev/nonebot-plugin-merge-forward`；
-在该目录先 `uv pip install -e .`，或改用
-`uv add nonebot-plugin-merge-forward --path ../nonebot-plugin-merge-forward`。
+开发与安装时，`pyproject.toml` 的 `[tool.uv.sources]` 把
+`nonebot-plugin-merge-forward` 指向 GitHub 仓库
+`https://github.com/xinvxueyuan/nonebot-plugin-merge-forward.git`（该包不在 PyPI），
+`uv sync` 会自动从 git 拉取并按 `uv.lock` 锁定 commit；
+如需改动 merge-forward 本体，再临时把该行改成
+`uv add nonebot-plugin-merge-forward --path ../nonebot-plugin-merge-forward` 做本地联调。
 
 ### 测试与门禁
 

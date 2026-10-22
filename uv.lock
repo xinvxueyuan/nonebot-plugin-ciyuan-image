@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.11'",
@@ -652,7 +652,7 @@ requires-dist = [
     { name = "nonebot-adapter-onebot", marker = "extra == 'dev'", specifier = ">=2.4.6" },
     { name = "nonebot-plugin-htmlkit", marker = "extra == 'dev'", specifier = ">=0.1.0rc5" },
     { name = "nonebot-plugin-htmlkit", marker = "extra == 'htmlkit'", specifier = ">=0.1.0rc5" },
-    { name = "nonebot-plugin-merge-forward", directory = "C:/dev/nonebot-plugin-merge-forward" },
+    { name = "nonebot-plugin-merge-forward", git = "https://github.com/xinvxueyuan/nonebot-plugin-merge-forward.git" },
     { name = "nonebot2", specifier = ">=2.5.0" },
     { name = "nonebot2", marker = "extra == 'dev'", specifier = ">=2.5.0" },
     { name = "nonebot2", extras = ["fastapi"], marker = "extra == 'dev'", specifier = ">=2.5.0" },
@@ -708,34 +708,10 @@ wheels = [
 [[package]]
 name = "nonebot-plugin-merge-forward"
 version = "0.1.0"
-source = { directory = "C:/dev/nonebot-plugin-merge-forward" }
+source = { git = "https://github.com/xinvxueyuan/nonebot-plugin-merge-forward.git#9b3919b17a8f6aaaa7bff68631bf28fcaeab35d9" }
 dependencies = [
     { name = "nonebot-adapter-onebot" },
     { name = "nonebot2" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "nonebot-adapter-onebot", specifier = ">=2.4.6" },
-    { name = "nonebot-adapter-onebot", marker = "extra == 'dev'", specifier = ">=2.4.6" },
-    { name = "nonebot-plugin-alconna", marker = "extra == 'alconna'", specifier = ">=0.56.0" },
-    { name = "nonebot-plugin-alconna", marker = "extra == 'dev'", specifier = ">=0.56.0" },
-    { name = "nonebot2", specifier = ">=2.5.0" },
-    { name = "nonebot2", marker = "extra == 'dev'", specifier = ">=2.5.0" },
-    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.411" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.16.2" },
-]
-provides-extras = ["alconna", "dev"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "nonebot-plugin-alconna", specifier = ">=0.56.0" },
-    { name = "nonebot2", extras = ["fastapi"], specifier = ">=2.5.0" },
-    { name = "pytest", specifier = ">=8.0" },
-]
-lint = [
-    { name = "pyright", specifier = ">=1.1.411" },
-    { name = "ruff", specifier = ">=0.16.2" },
 ]
 
 [[package]]
