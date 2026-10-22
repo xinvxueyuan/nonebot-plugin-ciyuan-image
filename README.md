@@ -156,7 +156,7 @@ uv run pyright
 
 ## 许可证与相关仓库
 
-- **许可证**：`MIT`（`pyproject.toml` 的 `license = { text = "MIT" }`；仓库暂未附 `LICENSE` 文件）。
+- **许可证**：`MIT`（见仓库根目录 `LICENSE` 文件，Copyright (c) 2026 新v学员 (xinvxueyuan)；`pyproject.toml` 的 `license = { text = "MIT" }`）。
 - **相关仓库**：
   - [xinvxueyuan/qbot](https://github.com/xinvxueyuan/qbot) —— 宿主，以 `vendor/` 子模块引入本插件。
   - [xinvxueyuan/nonebot-plugin-merge-forward](https://github.com/xinvxueyuan/nonebot-plugin-merge-forward) —— 本插件的运行依赖，提供 `build_nodes` / `send_group_forward_msg`。
